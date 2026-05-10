@@ -4,7 +4,9 @@ import { useTheme } from '../context/ThemeContext';
 import api from '../services/api';
 import { activityCategories } from '../utils/helpers';
 import Modal from '../components/Modal';
-import { HiSearch, HiStar, HiClock, HiCurrencyDollar, HiFilter } from 'react-icons/hi';
+import { HiSearch, HiStar, HiClock, HiCurrencyDollar, HiLightningBolt } from 'react-icons/hi';
+import PageHeader from '../components/PageHeader';
+import EmptyState from '../components/EmptyState';
 
 const sampleActivities = [
   { name: 'Eiffel Tower Visit', category: 'sightseeing', image: 'https://images.unsplash.com/photo-1511739001486-6bfe10ce65f4?w=400', cost: 25, duration: '2-3 hours', rating: 4.8, location: 'Paris' },
@@ -35,94 +37,119 @@ export default function Activities() {
   });
 
   return (
-    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
-      <div className="mb-6">
-        <h1 className="text-2xl font-bold">Activity Explorer 🎯</h1>
-        <p className={`text-sm ${isDark ? 'text-dark-text-secondary' : 'text-light-text-secondary'}`}>
-          Discover amazing things to do
-        </p>
+    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="pb-8">
+      <PageHeader 
+        title="Activity Explorer" 
+        subtitle="Discover amazing things to do around the world"
+        icon={HiLightningBolt}
+      />
+
+      <div className={`flex items-center gap-3 px-5 py-3.5 rounded-2xl border transition-all duration-300 mb-6
+        ${isDark ? 'bg-gray-900/50 border-gray-700/50 focus-within:border-primary focus-within:ring-2 focus-within:ring-primary/20' : 'bg-white border-gray-200 focus-within:border-primary focus-within:ring-2 focus-within:ring-primary/20 shadow-sm'}`}>
+        <HiSearch className={`text-lg ${isDark ? 'text-gray-500' : 'text-gray-400'}`} />
+        <input type="text" placeholder="Search activities or locations..." value={search}
+          onChange={(e) => setSearch(e.target.value)} 
+          className="flex-1 bg-transparent outline-none text-sm font-medium" />
       </div>
 
-      <div className={`flex items-center gap-2 px-4 py-3 rounded-xl border mb-4
-        ${isDark ? 'bg-dark-card border-dark-border' : 'bg-white border-light-border'}`}>
-        <HiSearch className="text-gray-400" />
-        <input type="text" placeholder="Search activities..." value={search}
-          onChange={(e) => setSearch(e.target.value)} className="flex-1 bg-transparent outline-none text-sm" />
-      </div>
-
-      <div className="flex gap-2 overflow-x-auto pb-2 mb-6 scrollbar-hide">
+      <div className="flex gap-3 overflow-x-auto pb-4 mb-6 scrollbar-hide">
         <motion.button whileTap={{ scale: 0.95 }} onClick={() => setActiveCategory('all')}
-          className={`px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap transition-all
-            ${activeCategory === 'all' ? 'gradient-primary text-white' : isDark ? 'bg-dark-card text-dark-text-secondary' : 'bg-gray-100 text-light-text-secondary'}`}>
+          className={`px-5 py-2.5 rounded-xl text-sm font-bold whitespace-nowrap transition-all border
+            ${activeCategory === 'all' 
+              ? 'bg-primary border-primary text-white shadow-lg shadow-primary/30' 
+              : isDark ? 'bg-gray-800/50 border-gray-700 text-gray-400 hover:text-gray-200 hover:border-gray-500' : 'bg-white border-gray-200 text-gray-500 hover:text-gray-800 hover:border-gray-300 shadow-sm'}`}>
           🌟 All
         </motion.button>
         {activityCategories.map((cat) => (
           <motion.button key={cat.value} whileTap={{ scale: 0.95 }} onClick={() => setActiveCategory(cat.value)}
-            className={`px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap transition-all
-              ${activeCategory === cat.value ? 'gradient-primary text-white' : isDark ? 'bg-dark-card text-dark-text-secondary' : 'bg-gray-100 text-light-text-secondary'}`}>
+            className={`px-5 py-2.5 rounded-xl text-sm font-bold whitespace-nowrap transition-all border
+              ${activeCategory === cat.value 
+                ? 'bg-primary border-primary text-white shadow-lg shadow-primary/30' 
+                : isDark ? 'bg-gray-800/50 border-gray-700 text-gray-400 hover:text-gray-200 hover:border-gray-500' : 'bg-white border-gray-200 text-gray-500 hover:text-gray-800 hover:border-gray-300 shadow-sm'}`}>
             {cat.icon} {cat.label}
           </motion.button>
         ))}
       </div>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
-        {filtered.map((activity, i) => (
-          <motion.div key={i}
-            initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: i * 0.05 }} whileHover={{ y: -4 }}
-            onClick={() => setSelectedActivity(activity)}
-            className="glass-card overflow-hidden cursor-pointer group">
-            <div className="relative h-40 overflow-hidden">
-              <img src={activity.image} alt={activity.name}
-                className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
-              <span className="absolute top-3 left-3 px-2 py-0.5 rounded-full bg-white/20 backdrop-blur-sm text-white text-xs font-medium">
-                {activityCategories.find(c => c.value === activity.category)?.icon} {activity.category}
-              </span>
-            </div>
-            <div className="p-4">
-              <h3 className="font-bold text-sm mb-1">{activity.name}</h3>
-              <p className={`text-xs mb-2 ${isDark ? 'text-dark-text-secondary' : 'text-light-text-secondary'}`}>
-                📍 {activity.location}
-              </p>
-              <div className="flex items-center justify-between text-xs">
-                <span className="flex items-center gap-1"><HiStar className="text-warning" /> {activity.rating}</span>
-                <span className="flex items-center gap-1"><HiClock className="text-accent" /> {activity.duration}</span>
-                <span className="font-semibold text-primary">
-                  {activity.cost > 0 ? `$${activity.cost}` : 'Free'}
-                </span>
+      {filtered.length > 0 ? (
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 lg:gap-8">
+          {filtered.map((activity, i) => (
+            <motion.div key={i}
+              initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: i * 0.05 }}
+              onClick={() => setSelectedActivity(activity)}
+              className={`rounded-3xl overflow-hidden cursor-pointer border transition-all duration-300 hover:-translate-y-2 hover:shadow-2xl group flex flex-col
+                  ${isDark ? 'bg-gray-800/50 border-gray-700/50 hover:shadow-primary/10 hover:border-primary/30' : 'bg-white border-gray-100 hover:shadow-xl hover:border-primary/20'}`}
+            >
+              <div className="relative h-48 overflow-hidden">
+                <img src={activity.image} alt={activity.name}
+                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/10 to-transparent" />
+                <div className="absolute top-4 left-4">
+                  <span className="px-3 py-1.5 rounded-full bg-white/20 backdrop-blur-md border border-white/30 text-white text-[10px] font-bold uppercase tracking-wider shadow-sm">
+                    {activityCategories.find(c => c.value === activity.category)?.icon} {activity.category}
+                  </span>
+                </div>
               </div>
-            </div>
-          </motion.div>
-        ))}
-      </div>
+              <div className="p-5 flex flex-col flex-1">
+                <h3 className="font-extrabold text-lg mb-1 group-hover:text-primary transition-colors truncate">{activity.name}</h3>
+                <p className={`text-sm mb-4 font-medium flex items-center gap-1.5 ${isDark ? 'text-gray-400' : 'text-gray-500'}`}>
+                  <span className="text-accent">📍</span> {activity.location}
+                </p>
+                <div className="mt-auto flex items-center justify-between text-sm font-bold pt-4 border-t border-dashed border-gray-200 dark:border-gray-700">
+                  <span className="flex items-center gap-1.5"><HiStar className="text-warning text-lg" /> {activity.rating}</span>
+                  <span className="flex items-center gap-1.5"><HiClock className="text-accent-light text-lg" /> {activity.duration}</span>
+                  <span className="font-extrabold text-primary text-base">
+                    {activity.cost > 0 ? `$${activity.cost}` : 'Free'}
+                  </span>
+                </div>
+              </div>
+            </motion.div>
+          ))}
+        </div>
+      ) : (
+        <EmptyState 
+          icon="🎯"
+          title="No activities found"
+          description="We couldn't find any activities matching your search or category."
+        />
+      )}
 
       <Modal isOpen={!!selectedActivity} onClose={() => setSelectedActivity(null)}
         title={selectedActivity?.name} size="md">
         {selectedActivity && (
           <div>
-            <img src={selectedActivity.image} alt={selectedActivity.name}
-              className="w-full h-48 object-cover rounded-xl mb-4" />
-            <div className="grid grid-cols-3 gap-3 mb-4">
-              <div className={`p-3 rounded-xl text-center ${isDark ? 'bg-dark-card' : 'bg-gray-50'}`}>
-                <HiStar className="text-warning mx-auto mb-1" />
-                <p className="text-sm font-bold">{selectedActivity.rating}</p>
-                <p className="text-xs text-gray-500">Rating</p>
-              </div>
-              <div className={`p-3 rounded-xl text-center ${isDark ? 'bg-dark-card' : 'bg-gray-50'}`}>
-                <HiClock className="text-accent mx-auto mb-1" />
-                <p className="text-sm font-bold">{selectedActivity.duration}</p>
-                <p className="text-xs text-gray-500">Duration</p>
-              </div>
-              <div className={`p-3 rounded-xl text-center ${isDark ? 'bg-dark-card' : 'bg-gray-50'}`}>
-                <HiCurrencyDollar className="text-primary mx-auto mb-1" />
-                <p className="text-sm font-bold">{selectedActivity.cost > 0 ? `$${selectedActivity.cost}` : 'Free'}</p>
-                <p className="text-xs text-gray-500">Cost</p>
+            <div className="relative mb-6 rounded-2xl overflow-hidden shadow-lg">
+              <img src={selectedActivity.image} alt={selectedActivity.name}
+                className="w-full h-56 object-cover" />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
+              <div className="absolute bottom-4 left-4 right-4 flex justify-between items-end">
+                <p className="text-white font-medium flex items-center gap-1.5">
+                  📍 {selectedActivity.location}
+                </p>
+                <span className="px-3 py-1.5 rounded-full bg-primary text-white text-[10px] font-bold uppercase tracking-wider shadow-sm">
+                  {activityCategories.find(c => c.value === selectedActivity.category)?.icon} {selectedActivity.category}
+                </span>
               </div>
             </div>
-            <p className={`text-sm ${isDark ? 'text-dark-text-secondary' : 'text-light-text-secondary'}`}>
-              📍 {selectedActivity.location} • {activityCategories.find(c => c.value === selectedActivity.category)?.icon} {selectedActivity.category}
-            </p>
+            
+            <div className="grid grid-cols-3 gap-4 mb-2">
+              <div className={`p-4 rounded-2xl text-center border ${isDark ? 'bg-gray-800/50 border-gray-700' : 'bg-gray-50 border-gray-200'}`}>
+                <HiStar className="text-warning mx-auto mb-2 text-2xl" />
+                <p className="text-base font-extrabold">{selectedActivity.rating}</p>
+                <p className={`text-[10px] font-bold uppercase tracking-wider mt-1 ${isDark ? 'text-gray-500' : 'text-gray-400'}`}>Rating</p>
+              </div>
+              <div className={`p-4 rounded-2xl text-center border ${isDark ? 'bg-gray-800/50 border-gray-700' : 'bg-gray-50 border-gray-200'}`}>
+                <HiClock className="text-accent-light mx-auto mb-2 text-2xl" />
+                <p className="text-base font-extrabold">{selectedActivity.duration}</p>
+                <p className={`text-[10px] font-bold uppercase tracking-wider mt-1 ${isDark ? 'text-gray-500' : 'text-gray-400'}`}>Duration</p>
+              </div>
+              <div className={`p-4 rounded-2xl text-center border ${isDark ? 'bg-gray-800/50 border-gray-700' : 'bg-gray-50 border-gray-200'}`}>
+                <HiCurrencyDollar className="text-primary mx-auto mb-2 text-2xl" />
+                <p className="text-base font-extrabold">{selectedActivity.cost > 0 ? `$${selectedActivity.cost}` : 'Free'}</p>
+                <p className={`text-[10px] font-bold uppercase tracking-wider mt-1 ${isDark ? 'text-gray-500' : 'text-gray-400'}`}>Cost</p>
+              </div>
+            </div>
           </div>
         )}
       </Modal>

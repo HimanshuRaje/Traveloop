@@ -6,7 +6,9 @@ import api from '../services/api';
 import { formatCurrency } from '../utils/helpers';
 import toast from 'react-hot-toast';
 import { PieChart, Pie, Cell, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
-import { HiCurrencyDollar, HiExclamation, HiSave } from 'react-icons/hi';
+import { HiCurrencyDollar, HiExclamation, HiSave, HiChartPie } from 'react-icons/hi';
+import PageHeader from '../components/PageHeader';
+import EmptyState from '../components/EmptyState';
 
 const COLORS = ['#6C63FF', '#FF6B6B', '#4ECDC4', '#FFB347', '#9CA3AF'];
 
@@ -55,40 +57,39 @@ export default function BudgetDashboard() {
   ];
 
   if (!tripId) return (
-    <div className="glass-card p-12 text-center">
-      <p className="text-5xl mb-4">💰</p>
-      <h2 className="text-xl font-bold mb-2">Select a trip first</h2>
-      <p className={`text-sm ${isDark ? 'text-dark-text-secondary' : 'text-light-text-secondary'}`}>
-        Go to My Trips and select a trip to manage its budget
-      </p>
-    </div>
+    <EmptyState 
+      icon="💰"
+      title="Select a trip first"
+      description="Go to My Trips and select a trip to manage its budget"
+    />
   );
 
-  const inputClass = `w-full px-4 py-2.5 rounded-xl border text-sm outline-none transition-all
-    ${isDark ? 'bg-dark-card border-dark-border text-dark-text focus:border-primary focus:ring-1 focus:ring-primary/30' : 'bg-gray-50 border-light-border focus:border-primary focus:ring-1 focus:ring-primary/30'}`;
+  const inputClass = `w-full px-5 py-3.5 rounded-2xl border text-sm font-medium outline-none transition-all duration-300
+    ${isDark ? 'bg-gray-900/50 border-gray-700/50 text-white focus:border-primary focus:ring-2 focus:ring-primary/20' : 'bg-gray-50 border-gray-200 focus:border-primary focus:ring-2 focus:ring-primary/20 shadow-sm'}`;
 
   return (
-    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
-      <div className="flex items-center justify-between mb-6">
-        <div>
-          <h1 className="text-2xl font-bold">Budget Dashboard 💰</h1>
-          <p className={`text-sm ${isDark ? 'text-dark-text-secondary' : 'text-light-text-secondary'}`}>
-            Track and manage your trip expenses
-          </p>
-        </div>
-        <motion.button whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.97 }} onClick={saveBudget}
-          className="flex items-center gap-2 px-4 py-2.5 rounded-xl gradient-primary text-white text-sm font-medium shadow-lg shadow-primary/25">
-          <HiSave /> Save
-        </motion.button>
-      </div>
+    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="pb-8">
+      <PageHeader 
+        title="Budget Dashboard" 
+        subtitle="Track and manage your trip expenses"
+        icon={HiChartPie}
+        actionButton={
+          <motion.button whileHover={{ scale: 1.03, y: -2 }} whileTap={{ scale: 0.97 }} onClick={saveBudget}
+            className="flex items-center gap-2 px-6 py-3 rounded-2xl bg-gradient-to-r from-primary to-primary-light text-white text-sm font-bold shadow-lg shadow-primary/30 transition-all">
+            <HiSave className="text-lg" /> Save Changes
+          </motion.button>
+        }
+      />
 
       {isOverBudget && (
         <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }}
-          className="flex items-center gap-3 p-4 rounded-xl bg-danger/10 border border-danger/30 mb-6">
-          <HiExclamation className="text-danger text-xl flex-shrink-0" />
+          className="flex items-center gap-4 p-5 rounded-2xl bg-danger/10 border border-danger/30 mb-8 shadow-sm">
+          <div className="w-10 h-10 rounded-full bg-danger/20 flex items-center justify-center flex-shrink-0">
+            <HiExclamation className="text-danger text-2xl" />
+          </div>
           <div>
-            <p className="font-semibold text-sm text-danger">Over Budget!</p>
-            <p className="text-xs text-danger/80">
+            <p className="font-extrabold text-base text-danger mb-0.5">Over Budget Warning</p>
+            <p className="text-sm font-medium text-danger/80">
               You're {formatCurrency(totalEstimated - budget.totalBudget)} over your budget of {formatCurrency(budget.totalBudget)}
             </p>
           </div>
@@ -96,75 +97,111 @@ export default function BudgetDashboard() {
       )}
 
       {/* Summary cards */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-6">
-        <div className="glass-card-static p-5">
-          <p className={`text-xs font-medium mb-1 ${isDark ? 'text-dark-text-secondary' : 'text-light-text-secondary'}`}>Total Budget</p>
-          <p className="text-2xl font-bold text-primary">{formatCurrency(budget.totalBudget)}</p>
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
+        <div className={`rounded-3xl p-6 border transition-all duration-300 hover:shadow-xl
+          ${isDark ? 'bg-gray-800/50 border-gray-700/50 hover:border-primary/30' : 'bg-white border-gray-100 shadow-sm hover:border-primary/20'}`}>
+          <div className={`w-12 h-12 rounded-2xl flex items-center justify-center mb-4 ${isDark ? 'bg-gray-900/50' : 'bg-gray-50'}`}>
+            <HiCurrencyDollar className="text-2xl text-primary" />
+          </div>
+          <p className="text-3xl font-extrabold mb-1 text-primary">{formatCurrency(budget.totalBudget)}</p>
+          <p className={`text-[10px] font-bold uppercase tracking-wider ${isDark ? 'text-gray-500' : 'text-gray-400'}`}>Total Budget</p>
         </div>
-        <div className="glass-card-static p-5">
-          <p className={`text-xs font-medium mb-1 ${isDark ? 'text-dark-text-secondary' : 'text-light-text-secondary'}`}>Estimated Cost</p>
-          <p className={`text-2xl font-bold ${isOverBudget ? 'text-danger' : 'text-success'}`}>{formatCurrency(totalEstimated)}</p>
+        
+        <div className={`rounded-3xl p-6 border transition-all duration-300 hover:shadow-xl
+          ${isDark ? 'bg-gray-800/50 border-gray-700/50 hover:border-warning/30' : 'bg-white border-gray-100 shadow-sm hover:border-warning/20'}`}>
+          <div className={`w-12 h-12 rounded-2xl flex items-center justify-center mb-4 ${isDark ? 'bg-gray-900/50' : 'bg-gray-50'}`}>
+            <HiChartPie className={`text-2xl ${isOverBudget ? 'text-danger' : 'text-warning'}`} />
+          </div>
+          <p className={`text-3xl font-extrabold mb-1 ${isOverBudget ? 'text-danger' : 'text-warning'}`}>{formatCurrency(totalEstimated)}</p>
+          <p className={`text-[10px] font-bold uppercase tracking-wider ${isDark ? 'text-gray-500' : 'text-gray-400'}`}>Estimated Cost</p>
         </div>
-        <div className="glass-card-static p-5">
-          <p className={`text-xs font-medium mb-1 ${isDark ? 'text-dark-text-secondary' : 'text-light-text-secondary'}`}>Remaining</p>
-          <p className={`text-2xl font-bold ${isOverBudget ? 'text-danger' : 'text-success'}`}>
+        
+        <div className={`rounded-3xl p-6 border transition-all duration-300 hover:shadow-xl
+          ${isDark ? 'bg-gray-800/50 border-gray-700/50 hover:border-success/30' : 'bg-white border-gray-100 shadow-sm hover:border-success/20'}`}>
+          <div className={`w-12 h-12 rounded-2xl flex items-center justify-center mb-4 ${isDark ? 'bg-gray-900/50' : 'bg-gray-50'}`}>
+            <HiSave className={`text-2xl ${isOverBudget ? 'text-danger' : 'text-success'}`} />
+          </div>
+          <p className={`text-3xl font-extrabold mb-1 ${isOverBudget ? 'text-danger' : 'text-success'}`}>
             {formatCurrency(Math.max(0, budget.totalBudget - totalEstimated))}
           </p>
+          <p className={`text-[10px] font-bold uppercase tracking-wider ${isDark ? 'text-gray-500' : 'text-gray-400'}`}>Remaining</p>
         </div>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
         {/* Pie Chart */}
-        <div className="glass-card-static p-5">
-          <h3 className="font-bold mb-4">Cost Breakdown</h3>
+        <div className={`rounded-3xl p-6 border ${isDark ? 'bg-gray-800/50 border-gray-700/50' : 'bg-white border-gray-100 shadow-sm'}`}>
+          <h3 className="font-extrabold text-lg mb-6">Cost Breakdown</h3>
           {pieData.length > 0 ? (
-            <ResponsiveContainer width="100%" height={250}>
+            <ResponsiveContainer width="100%" height={280}>
               <PieChart>
-                <Pie data={pieData} cx="50%" cy="50%" innerRadius={60} outerRadius={100}
-                  paddingAngle={3} dataKey="value"
+                <Pie data={pieData} cx="50%" cy="50%" innerRadius={70} outerRadius={110}
+                  paddingAngle={5} dataKey="value"
                   label={({ name, percent }) => `${name} ${(percent * 100).toFixed(0)}%`}
-                  labelLine={{ stroke: isDark ? '#9CA3AF' : '#6B7280' }}>
+                  labelLine={{ stroke: isDark ? '#9CA3AF' : '#6B7280', strokeWidth: 1.5 }}>
                   {pieData.map((_, i) => <Cell key={i} fill={COLORS[i % COLORS.length]} />)}
                 </Pie>
                 <Tooltip formatter={(v) => formatCurrency(v)}
-                  contentStyle={{ backgroundColor: isDark ? '#1A1A2E' : '#fff', border: `1px solid ${isDark ? '#2A2A4A' : '#E5E7EB'}`, borderRadius: 12 }}
-                  itemStyle={{ color: isDark ? '#F8F9FE' : '#1A1A2E' }} />
+                  contentStyle={{ backgroundColor: isDark ? '#1F2937' : '#FFFFFF', border: `1px solid ${isDark ? '#374151' : '#F3F4F6'}`, borderRadius: 16, boxShadow: '0 10px 15px -3px rgba(0, 0, 0, 0.1)' }}
+                  itemStyle={{ color: isDark ? '#F3F4F6' : '#111827', fontWeight: 'bold' }} />
               </PieChart>
             </ResponsiveContainer>
-          ) : <p className="text-sm text-center py-12 text-gray-500">Add expenses to see breakdown</p>}
+          ) : (
+            <div className="flex flex-col items-center justify-center h-[280px]">
+              <div className="w-16 h-16 rounded-full bg-gray-100 dark:bg-gray-800 flex items-center justify-center mb-3">
+                <HiChartPie className="text-3xl text-gray-400" />
+              </div>
+              <p className="text-sm font-medium text-gray-500">Add expenses to see breakdown</p>
+            </div>
+          )}
         </div>
 
         {/* Bar Chart */}
-        <div className="glass-card-static p-5">
-          <h3 className="font-bold mb-4">Expense Comparison</h3>
-          <ResponsiveContainer width="100%" height={250}>
-            <BarChart data={barData}>
-              <CartesianGrid strokeDasharray="3 3" stroke={isDark ? '#2A2A4A' : '#E5E7EB'} />
-              <XAxis dataKey="name" tick={{ fontSize: 11, fill: isDark ? '#9CA3AF' : '#6B7280' }} stroke={isDark ? '#9CA3AF' : '#6B7280'} />
-              <YAxis tick={{ fontSize: 11, fill: isDark ? '#9CA3AF' : '#6B7280' }} stroke={isDark ? '#9CA3AF' : '#6B7280'} />
+        <div className={`rounded-3xl p-6 border ${isDark ? 'bg-gray-800/50 border-gray-700/50' : 'bg-white border-gray-100 shadow-sm'}`}>
+          <h3 className="font-extrabold text-lg mb-6">Expense Comparison</h3>
+          <ResponsiveContainer width="100%" height={280}>
+            <BarChart data={barData} margin={{ top: 20, right: 30, left: 20, bottom: 5 }}>
+              <CartesianGrid strokeDasharray="3 3" stroke={isDark ? '#374151' : '#F3F4F6'} vertical={false} />
+              <XAxis dataKey="name" tick={{ fontSize: 12, fill: isDark ? '#9CA3AF' : '#6B7280', fontWeight: 'bold' }} stroke={isDark ? '#4B5563' : '#D1D5DB'} axisLine={false} tickLine={false} dy={10} />
+              <YAxis tick={{ fontSize: 12, fill: isDark ? '#9CA3AF' : '#6B7280', fontWeight: 'bold' }} stroke={isDark ? '#4B5563' : '#D1D5DB'} axisLine={false} tickLine={false} dx={-10} />
               <Tooltip formatter={(v) => formatCurrency(v)}
-                contentStyle={{ backgroundColor: isDark ? '#1A1A2E' : '#fff', border: `1px solid ${isDark ? '#2A2A4A' : '#E5E7EB'}`, borderRadius: 12 }}
-                itemStyle={{ color: isDark ? '#F8F9FE' : '#1A1A2E' }} />
-              <Bar dataKey="amount" fill="#6C63FF" radius={[4, 4, 0, 0]} />
+                contentStyle={{ backgroundColor: isDark ? '#1F2937' : '#FFFFFF', border: `1px solid ${isDark ? '#374151' : '#F3F4F6'}`, borderRadius: 16, boxShadow: '0 10px 15px -3px rgba(0, 0, 0, 0.1)' }}
+                itemStyle={{ color: isDark ? '#F3F4F6' : '#111827', fontWeight: 'bold' }}
+                cursor={{ fill: isDark ? '#374151' : '#F3F4F6', opacity: 0.4 }} />
+              <Bar dataKey="amount" fill="#6C63FF" radius={[6, 6, 0, 0]}>
+                {barData.map((entry, index) => (
+                  <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                ))}
+              </Bar>
             </BarChart>
           </ResponsiveContainer>
         </div>
       </div>
 
       {/* Budget inputs */}
-      <div className="glass-card-static p-5">
-        <h3 className="font-bold mb-4">Edit Budget</h3>
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+      <div className={`rounded-3xl p-6 md:p-8 border ${isDark ? 'bg-gray-800/50 border-gray-700/50' : 'bg-white border-gray-100 shadow-sm'}`}>
+        <h3 className="font-extrabold text-xl mb-6 flex items-center gap-2">
+          <HiSave className="text-primary" /> Edit Budget Limits
+        </h3>
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
           <div>
-            <label className="block text-xs font-medium mb-1">Total Budget</label>
-            <input type="number" value={budget.totalBudget}
-              onChange={(e) => setBudget({ ...budget, totalBudget: Number(e.target.value) })} className={inputClass} />
+            <label className={`block text-[10px] font-bold uppercase tracking-wider mb-2 ${isDark ? 'text-gray-400' : 'text-gray-500'}`}>Total Budget Allocation</label>
+            <div className="relative">
+              <span className={`absolute left-4 top-1/2 -translate-y-1/2 font-bold ${isDark ? 'text-gray-500' : 'text-gray-400'}`}>$</span>
+              <input type="number" value={budget.totalBudget}
+                onChange={(e) => setBudget({ ...budget, totalBudget: Number(e.target.value) })} 
+                className={`${inputClass} pl-8`} />
+            </div>
           </div>
           {['transport', 'hotels', 'food', 'activities', 'miscellaneous'].map((field) => (
             <div key={field}>
-              <label className="block text-xs font-medium mb-1 capitalize">{field}</label>
-              <input type="number" value={budget[field]}
-                onChange={(e) => setBudget({ ...budget, [field]: Number(e.target.value) })} className={inputClass} />
+              <label className={`block text-[10px] font-bold uppercase tracking-wider mb-2 ${isDark ? 'text-gray-400' : 'text-gray-500'}`}>{field}</label>
+              <div className="relative">
+                <span className={`absolute left-4 top-1/2 -translate-y-1/2 font-bold ${isDark ? 'text-gray-500' : 'text-gray-400'}`}>$</span>
+                <input type="number" value={budget[field]}
+                  onChange={(e) => setBudget({ ...budget, [field]: Number(e.target.value) })} 
+                  className={`${inputClass} pl-8`} />
+              </div>
             </div>
           ))}
         </div>

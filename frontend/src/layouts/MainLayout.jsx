@@ -73,15 +73,17 @@ export default function MainLayout() {
           )}
         </AnimatePresence>
 
-        <main className="flex-1 p-4 sm:p-5 lg:p-6 pb-24 md:pb-6">
-          <motion.div
-            key={location.pathname}
-            initial={{ opacity: 0, y: 12 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.3 }}
-          >
-            <Outlet />
-          </motion.div>
+        <main className="flex-1 p-4 sm:p-6 lg:p-8 pb-24 md:pb-8 w-full">
+          <div className="max-w-7xl mx-auto w-full">
+            <motion.div
+              key={location.pathname}
+              initial={{ opacity: 0, y: 12 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.3 }}
+            >
+              <Outlet />
+            </motion.div>
+          </div>
         </main>
       </div>
 

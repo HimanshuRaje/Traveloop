@@ -52,18 +52,18 @@ export default function Navbar({ onMobileMenuToggle, mobileMenuOpen }) {
 
   return (
     <header
-      className={`sticky top-0 z-30 border-b backdrop-blur-xl
+      className={`sticky top-0 z-30 border-b backdrop-blur-2xl
         ${isDark
-          ? 'bg-dark-surface/80 border-dark-border'
-          : 'bg-white/80 border-light-border'
+          ? 'bg-dark-surface/80 border-dark-border shadow-sm'
+          : 'bg-white/80 border-light-border shadow-sm'
         }`}
       role="banner"
     >
-      <div className="flex items-center justify-between h-16 px-4 lg:px-6">
+      <div className="flex items-center justify-between h-20 px-4 sm:px-6 lg:px-8 max-w-[1920px] mx-auto w-full">
         {/* Mobile menu button */}
         <button
           onClick={onMobileMenuToggle}
-          className={`md:hidden p-2 rounded-lg transition-colors
+          className={`md:hidden p-2.5 rounded-xl transition-colors
             ${isDark ? 'hover:bg-dark-card active:bg-dark-border' : 'hover:bg-gray-100 active:bg-gray-200'}`}
           aria-label={mobileMenuOpen ? 'Close navigation menu' : 'Open navigation menu'}
           aria-expanded={mobileMenuOpen}
@@ -73,27 +73,27 @@ export default function Navbar({ onMobileMenuToggle, mobileMenuOpen }) {
 
         {/* Mobile Logo */}
         <Link to="/dashboard" className="md:hidden flex items-center gap-2" aria-label="Traveloop home">
-          <div className="w-8 h-8 rounded-lg gradient-primary flex items-center justify-center">
+          <div className="w-9 h-9 rounded-xl gradient-primary flex items-center justify-center shadow-md">
             <span className="text-white font-bold">T</span>
           </div>
-          <span className="font-bold text-primary">Traveloop</span>
+          <span className="font-bold text-primary tracking-tight">Traveloop</span>
         </Link>
 
         {/* Search */}
         <form onSubmit={handleSearch} className="hidden md:flex items-center flex-1 max-w-md" role="search">
-          <div className={`flex items-center gap-2 w-full px-4 py-2 rounded-xl border transition-all
+          <div className={`flex items-center gap-2.5 w-full px-4 py-2.5 rounded-2xl border transition-all duration-300
             ${isDark
-              ? 'bg-dark-card border-dark-border focus-within:border-primary focus-within:ring-1 focus-within:ring-primary/30'
-              : 'bg-gray-50 border-light-border focus-within:border-primary focus-within:ring-1 focus-within:ring-primary/30'
+              ? 'bg-dark-card/50 border-dark-border focus-within:border-primary focus-within:bg-dark-card focus-within:ring-4 focus-within:ring-primary/10'
+              : 'bg-gray-50 border-gray-200 focus-within:border-primary focus-within:bg-white focus-within:ring-4 focus-within:ring-primary/10'
             }`}
           >
-            <HiSearch className="text-gray-400 flex-shrink-0" />
+            <HiSearch className="text-gray-400 flex-shrink-0 text-lg" />
             <input
               type="text"
               placeholder="Search destinations, trips..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="flex-1 bg-transparent outline-none text-sm min-w-0"
+              className="flex-1 bg-transparent outline-none text-sm font-medium min-w-0"
               aria-label="Search destinations and trips"
             />
           </div>

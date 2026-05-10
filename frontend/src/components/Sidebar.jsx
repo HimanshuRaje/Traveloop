@@ -44,22 +44,22 @@ export default function Sidebar({ collapsed = false, onToggleCollapse, isMobile 
     <Link to={item.path} onClick={handleLinkClick} aria-label={item.label}>
       <motion.div
         whileHover={{ x: 4 }}
-        className={`flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all duration-200 cursor-pointer group relative
+        className={`flex items-center gap-3.5 px-4 py-3 rounded-xl transition-all duration-200 cursor-pointer group relative overflow-hidden
           ${isActive(item.path)
-            ? 'bg-primary/10 text-primary font-semibold'
+            ? isDark ? 'bg-primary/15 text-primary font-bold' : 'bg-primary/10 text-primary-dark font-bold'
             : isDark
-              ? 'text-dark-text-secondary hover:text-dark-text hover:bg-dark-card'
-              : 'text-light-text-secondary hover:text-light-text hover:bg-gray-100'
+              ? 'text-gray-400 hover:text-gray-200 hover:bg-gray-800/50'
+              : 'text-gray-500 hover:text-gray-900 hover:bg-gray-50'
           }`}
       >
-        <item.icon className={`text-xl flex-shrink-0 ${isActive(item.path) ? 'text-primary' : ''}`} />
+        <item.icon className={`text-xl flex-shrink-0 transition-colors ${isActive(item.path) ? 'text-primary' : ''}`} />
         <AnimatePresence>
           {!collapsed && (
             <motion.span
               initial={{ opacity: 0, width: 0 }}
               animate={{ opacity: 1, width: 'auto' }}
               exit={{ opacity: 0, width: 0 }}
-              className="text-sm font-medium whitespace-nowrap overflow-hidden"
+              className="text-sm font-semibold whitespace-nowrap overflow-hidden tracking-wide"
             >
               {item.label}
             </motion.span>
@@ -68,7 +68,7 @@ export default function Sidebar({ collapsed = false, onToggleCollapse, isMobile 
         {isActive(item.path) && (
           <motion.div
             layoutId="activeIndicator"
-            className="absolute left-0 w-1 h-6 bg-primary rounded-r-full"
+            className="absolute left-0 top-0 bottom-0 w-1.5 bg-primary rounded-r-md shadow-[0_0_8px_rgba(108,99,255,0.6)]"
           />
         )}
       </motion.div>
